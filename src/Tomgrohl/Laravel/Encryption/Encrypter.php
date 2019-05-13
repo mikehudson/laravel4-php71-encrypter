@@ -106,9 +106,13 @@ class Encrypter extends BaseEncrypter
         // Here we will decrypt the value. If we are able to successfully decrypt it
         // we will then unserialize it and return it out to the caller. If we are
         // unable to decrypt this value we will throw out an exception message.
-        $decrypted = \openssl_decrypt(
-            $payload['value'], $this->cipher, $this->key, 0, $iv
-        );
+		try {
+			$decrypted = \openssl_decrypt(
+				$payload['value'], $this->cipher, $this->key, 0, $iv
+			);
+		} catch(\Exception $e) {
+			throw new DecryptException('Could not decrypt the data.');
+		}
 
         if ($decrypted === false) {
             throw new DecryptException('Could not decrypt the data.');
